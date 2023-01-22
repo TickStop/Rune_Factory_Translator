@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Rune Factory Translator</string>
+    <string name="action_import">Import Data</string>
+    <string name="action_export">Export Data</string>
+    <string name="placeholder_search">Search</string>
+    <string name="placeholder_search_submit">Submit</string>
+    <string name="placeholder_original">Original</string>
+    <string name="placeholder_translation">Translation</string>
+    <string name="button_save">Save Entry</string>
+    <string name="button_previous">Previous</string>
+    <string name="button_next">Next</string>
+    <!-- Strings used for fragments for navigation -->
+</resources>
