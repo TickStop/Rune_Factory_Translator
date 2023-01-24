@@ -9,19 +9,23 @@ public class TranslationState {
 
     public final String OriginalFileName;
     public final TableData Original;
-    public final TableData Translation;
+    private TableData mTranslation;
 
     public final int numberOfEntries;
     private int mSelectedEntryIndex;
 
     public TranslationState() {
-        this (null, null, "Translation");
+        this (null, "Translation", null);
         mSelectedEntryIndex = 0;
     }
 
-    public TranslationState(TableData original, TableData translation, String originalFileName) {
+    public TranslationState(TableData original, String originalFileName) {
+        this(original, originalFileName, null);
+    }
+
+    public TranslationState(TableData original, String originalFileName, TableData translation) {
         Original = original;
-        Translation = translation;
+        mTranslation = translation;
         OriginalFileName = originalFileName;
         mSelectedEntryIndex = -1;
 
@@ -36,6 +40,18 @@ public class TranslationState {
     /** @return the currently selected index */
     public int getSelectedEntryIndex() {
         return mSelectedEntryIndex;
+    }
+
+    public TableData getTranslation() {
+        return mTranslation;
+    }
+
+    public void setTranslation(TableData translation) {
+        if (Original == null)
+            return;
+        if (translation.getNumberOfEntries() != Original.getNumberOfEntries())
+            return;
+        mTranslation = translation;
     }
 
 
@@ -62,8 +78,8 @@ public class TranslationState {
                         Original.getEntry(mSelectedEntryIndex) :
                         "There was no original data imported";
         String translated =
-                Translation != null ?
-                        Translation.getEntry(mSelectedEntryIndex) :
+                mTranslation != null ?
+                        mTranslation.getEntry(mSelectedEntryIndex) :
                         "There was no translated data imported";
         return new String[] { original, translated };
     }
@@ -74,8 +90,8 @@ public class TranslationState {
         int selectedIndexWhenStarted = mSelectedEntryIndex;
         boolean jumpedToBeginning = false;
         for (int i = selectedIndexWhenStarted; i < numberOfEntries; i++) {
-            if (Translation != null) {
-                if (Translation.doesEntryContain(i, value) && selectedIndexWhenStarted < i) {
+            if (mTranslation != null) {
+                if (mTranslation.doesEntryContain(i, value) && selectedIndexWhenStarted < i) {
                     selectEntry(i);
                     return;
                 }
@@ -114,8 +130,8 @@ public class TranslationState {
 
     /** Sets the current entry of the translation to the passed String */
     public void setEntryAtCurrentIndex(String translation) {
-        if (Translation != null) {
-            Translation.setEntry(mSelectedEntryIndex, translation);
+        if (mTranslation != null) {
+            mTranslation.setEntry(mSelectedEntryIndex, translation);
         }
     }
 }

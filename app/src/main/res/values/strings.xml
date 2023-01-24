@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Rune Factory Translator</string>
-    <string name="action_import">Import Data</string>
-    <string name="action_export">Export Data</string>
+    <string name="action_import">Import</string>
+    <string name="action_import_original">Import Original</string>
+    <string name="action_import_translation">Import Translation</string>
+    <string name="action_export">Export</string>
     <string name="placeholder_search">Search</string>
     <string name="placeholder_search_submit">Submit</string>
     <string name="placeholder_original">Original</string>

@@ -102,21 +102,20 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
                     return;
 
                 if (result.getData() != null) {
+                    TableData originalData = loadTableFromUri(result.getData().getData());
                     Toast.makeText(context, "Imported original file", Toast.LENGTH_LONG);
-                    byte[] loadedData = loadFile(result.getData().getData());
-                    if (loadedData.length == 0) {
-                        Toast.makeText(context, "The selected file was not of type TEXT", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
                     translationState.removeListener(this);
-                    int lastPath = result.getData().getData().getPath().lastIndexOf("/") + 1;
-                    String fileName = result.getData().getData().getPath().substring(lastPath);
-                    translationState = new TranslationState(new TableData(loadedData, true), new TableData(loadedData, false), fileName);
+                    String path = result.getData().getData().getPath();
+                    int lastPathSegmentIndex = path.lastIndexOf("/") + 1;
+                    String fileName = path.substring(lastPathSegmentIndex);
+                    translationState = new TranslationState(originalData, fileName);
+                    translationState.addListener(this);
                     String[] entryIndexArray = new String[translationState.numberOfEntries];
                     for (int i = 0; i < translationState.numberOfEntries; i++) {
                         entryIndexArray[i] = String.format(Locale.GERMANY, "%d", i);
                     }
                     spinner_Select.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, entryIndexArray));
+                    setListeners();
                 }
             }
     );
@@ -129,26 +128,24 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
                 }
 
                 if (result.getData() != null) {
-                    byte[] loadedData = loadFile(result.getData().getData());
-                    if (loadedData.length == 0) {
-                        Toast.makeText(context, "The selected file was not of type TEXT", Toast.LENGTH_SHORT).show();
+                    TableData translatedData = loadTableFromUri(result.getData().getData());
+                    if (translatedData == null)
                         return;
-                    }
-                    TableData translatedData =  new TableData(loadedData, false);
-
-                    if (translationState.Original.getNumberOfEntries() == translatedData.getNumberOfEntries()) {
-                        translationState = new TranslationState(translationState.Original, translatedData, translationState.OriginalFileName);
-                        translationState.addListener(this);
-                        translationState.selectEntry(0);
-                    }
-                    else {
-                        translationState = new TranslationState();
-                    }
-
-                    setListeners();
+                    translationState.setTranslation(translatedData);
+                    translationState.selectEntry(0);
+                    updateUIDisplay(translationState);
                 }
             }
     );
+
+    private TableData loadTableFromUri(Uri uri) {
+        byte[] loadedData = loadFile(uri);
+        if (loadedData.length == 0) {
+            Toast.makeText(context, "The selected file was not of type TEXT", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        return new TableData(loadedData);
+    }
 
     private final ActivityResultLauncher<String> exportFile = registerForActivityResult(
             new ActivityResultContracts.CreateDocument(),
@@ -167,19 +164,24 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
         return true;
     }
 
+    private Intent getFileLoadIntent() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        return intent;
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_import) {
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
-            importTranslation.launch(intent);
+        if (id == R.id.action_import_original) {
+            Intent intent = getFileLoadIntent();
             importOriginal.launch(intent);
-
-            // importTranslatedFile.launch("*/*");
-            // importOriginalFile.launch("*/*");
+        }
+        else if (id == R.id.action_import_translation) {
+            Intent intent = getFileLoadIntent();
+            importTranslation.launch(intent);
         }
         else if (id == R.id.action_export) {
             exportFile.launch(translationState.OriginalFileName);
@@ -193,7 +195,6 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
 
     /** Updates the UI to show the currently selected entry */
     private void updateUIDisplay(TranslationState state) {
-        System.out.println("Updating UI display");
         spinner_Select.setSelection(state.getSelectedEntryIndex());
         String[] entries = state.getTableEntry();
         originalText.setText(entries[0]);
@@ -239,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
 
     @Override
     public void onBackPressed() {
+        // Disallow closing the app with the return button because this deletes all made changes
         Toast.makeText(context, "Can't close app using return", Toast.LENGTH_SHORT).show();
     }
 }

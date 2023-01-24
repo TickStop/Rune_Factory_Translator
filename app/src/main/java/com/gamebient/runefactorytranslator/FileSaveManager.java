@@ -37,7 +37,7 @@ public class FileSaveManager {
 
     /** Writes the TranslationState to an OutputStream */
     public static void exportBinaryTextFile(OutputStream stream, TranslationState state) {
-        appendTableToFile(stream, state.Translation);
+        appendTableToFile(stream, state.getTranslation());
     }
 
     /** Writes the TableData to an OutputStream */

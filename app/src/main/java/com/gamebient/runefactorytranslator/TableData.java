@@ -1,5 +1,7 @@
 package com.gamebient.runefactorytranslator;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 
@@ -8,18 +10,16 @@ public class TableData {
      *  The start position of the table is therefore 8. */
     private static final int TABLE_STARTPOS = 8;
 
-    private final byte[] dataTable;
     /** The number of entries this table has */
     private final int numberOfEntries;
     private final byte[][] entries;
 
-    public TableData(byte[] table, boolean isReadOnly) {
-        this.dataTable = table;
+    public TableData(byte[] table) {
         byte[] tableLengthData = Arrays.copyOfRange(table, 4, 8);
         numberOfEntries = ByteConverter.byteArrayToInt(tableLengthData);
         entries = new byte[numberOfEntries][];
 
-        ReadEntries();
+        readEntries(table);
     }
 
     /** @return the number of entries this table has */
@@ -42,7 +42,7 @@ public class TableData {
     }
 
     /** @return the positions of the entries in the file */
-    private int[] getEntryPositions() {
+    private int[] getEntryPositions(byte[] dataTable) {
         int[] entryPositions = new int[numberOfEntries];
         for (int entryIndex = 0; entryIndex < numberOfEntries; entryIndex++)
         {
@@ -54,7 +54,7 @@ public class TableData {
     }
 
     /** @return the lengths of the entries in the file */
-    private int[] getEntryLengths() {
+    private int[] getEntryLengths(byte[] dataTable) {
         int[] entryLengths = new int[numberOfEntries];
         for (int entryIndex = 0; entryIndex < numberOfEntries; entryIndex++)
         {
@@ -66,9 +66,9 @@ public class TableData {
     }
 
     /** Reads all entries and stores them in {@link TableData#entries} */
-    private void ReadEntries() {
-        int[] entryPositions = getEntryPositions();
-        int[] entryLengths = getEntryLengths();
+    private void readEntries(byte[] dataTable) {
+        int[] entryPositions = getEntryPositions(dataTable);
+        int[] entryLengths = getEntryLengths(dataTable);
         for (int i = 0; i < numberOfEntries; i++)
         {
             int start = entryPositions[i];
