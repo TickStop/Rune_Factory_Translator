@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
                     }
                     TableData translatedData =  new TableData(loadedData, false);
 
-                    if (translationState.Original.GetNumberOfEntries() == translatedData.GetNumberOfEntries()) {
+                    if (translationState.Original.getNumberOfEntries() == translatedData.getNumberOfEntries()) {
                         translationState = new TranslationState(translationState.Original, translatedData, translationState.OriginalFileName);
                         translationState.addListener(this);
                         translationState.selectEntry(0);

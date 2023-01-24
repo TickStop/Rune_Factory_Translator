@@ -26,7 +26,7 @@ public class TranslationState {
         mSelectedEntryIndex = -1;
 
         if (Original != null) {
-            numberOfEntries = Original.GetEntries().length;
+            numberOfEntries = Original.getEntries().length;
         }
         else {
             numberOfEntries = 0;
@@ -59,11 +59,11 @@ public class TranslationState {
     public String[] getTableEntry() {
         String original =
                 Original != null ?
-                        Original.GetEntry(mSelectedEntryIndex) :
+                        Original.getEntry(mSelectedEntryIndex) :
                         "There was no original data imported";
         String translated =
                 Translation != null ?
-                        Translation.GetEntry(mSelectedEntryIndex) :
+                        Translation.getEntry(mSelectedEntryIndex) :
                         "There was no translated data imported";
         return new String[] { original, translated };
     }
@@ -75,13 +75,13 @@ public class TranslationState {
         boolean jumpedToBeginning = false;
         for (int i = selectedIndexWhenStarted; i < numberOfEntries; i++) {
             if (Translation != null) {
-                if (Translation.DoesEntryContain(i, value) && selectedIndexWhenStarted < i) {
+                if (Translation.doesEntryContain(i, value) && selectedIndexWhenStarted < i) {
                     selectEntry(i);
                     return;
                 }
             }
             if (Original != null) {
-                if (Original.DoesEntryContain(i, value)
+                if (Original.doesEntryContain(i, value)
                         && selectedIndexWhenStarted < i) {
                     selectEntry(i);
                     return;
@@ -115,7 +115,7 @@ public class TranslationState {
     /** Sets the current entry of the translation to the passed String */
     public void setEntryAtCurrentIndex(String translation) {
         if (Translation != null) {
-            Translation.SetEntry(mSelectedEntryIndex, translation);
+            Translation.setEntry(mSelectedEntryIndex, translation);
         }
     }
 }

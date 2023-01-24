@@ -44,16 +44,16 @@ public class FileSaveManager {
     public static void appendTableToFile(OutputStream stream, TableData data) {
         try {
             stream.write("TEXT".getBytes(GlobalData.Encoding_Default));
-            stream.write(ByteConverter.intToByteArray(data.GetNumberOfEntries()));
+            stream.write(ByteConverter.intToByteArray(data.getNumberOfEntries()));
 
-            int totalPosition = 8 + data.GetEntries().length * 8;
-            for (int i = 0; i < data.GetEntries().length; i++) {
-                stream.write(ByteConverter.intToByteArray(data.GetEntries()[i].length));
+            int totalPosition = 8 + data.getEntries().length * 8;
+            for (int i = 0; i < data.getEntries().length; i++) {
+                stream.write(ByteConverter.intToByteArray(data.getEntries()[i].length));
                 stream.write(ByteConverter.intToByteArray(totalPosition));
-                totalPosition += data.GetEntries()[i].length + 2;
+                totalPosition += data.getEntries()[i].length + 2;
             }
-            for (int i = 0; i < data.GetEntries().length; i++) {
-                stream.write(data.GetEntries()[i]);
+            for (int i = 0; i < data.getEntries().length; i++) {
+                stream.write(data.getEntries()[i]);
                 stream.write(0);
                 stream.write(0);
             }

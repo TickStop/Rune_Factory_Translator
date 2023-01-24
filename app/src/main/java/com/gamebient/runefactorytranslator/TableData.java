@@ -30,45 +30,53 @@ public class TableData {
         mIsReadOnly = isReadOnly;
     }
 
-    public int GetNumberOfEntries() {
+    /** @return the number of entries this table has */
+    public int getNumberOfEntries() {
         return numberOfEntries;
     }
 
-    public byte[][] GetEntries() {
+    /** @return the entries' byte array */
+    public byte[][] getEntries() {
         return  entries;
     }
 
-    private int[] GetRange(int index, int startOffset) {
+    /** @return the range as an array
+     * <br> [0] start
+     * <br> [1] end */
+    private int[] getRange(int index, int startOffset) {
         int range_start = TABLE_STARTPOS + startOffset + 8 * index;
         int range_end = range_start + 4;
         return new int[] { range_start, range_end };
     }
 
-    private int[] GetEntryPositions() {
+    /** @return the positions of the entries in the file */
+    private int[] getEntryPositions() {
         int[] entryPositions = new int[numberOfEntries];
         for (int entryIndex = 0; entryIndex < numberOfEntries; entryIndex++)
         {
-            int[] range = GetRange(entryIndex, 4);
+            int[] range = getRange(entryIndex, 4);
             int entryPos = ByteConverter.byteArrayToInt(Arrays.copyOfRange(dataTable, range[0], range[1]));
             entryPositions[entryIndex] = entryPos;
         }
         return entryPositions;
     }
 
-    private int[] GetEntryLengths() {
+    /** @return the lengths of the entries in the file */
+    private int[] getEntryLengths() {
         int[] entryLengths = new int[numberOfEntries];
         for (int entryIndex = 0; entryIndex < numberOfEntries; entryIndex++)
         {
-            int[] range = GetRange(entryIndex, 0);
+            int[] range = getRange(entryIndex, 0);
             int entryPos = ByteConverter.byteArrayToInt(Arrays.copyOfRange(dataTable, range[0], range[1]));
             entryLengths[entryIndex] = entryPos;
         }
         return entryLengths;
     }
 
+    /** Reads all entries and stores them in {@link TableData#entries} */
     private void ReadEntries() {
-        int[] entryPositions = GetEntryPositions();
-        int[] entryLengths = GetEntryLengths();
+        int[] entryPositions = getEntryPositions();
+        int[] entryLengths = getEntryLengths();
         for (int i = 0; i < numberOfEntries; i++)
         {
             int start = entryPositions[i];
@@ -79,7 +87,7 @@ public class TableData {
 
     /** Searches for a string in the entry specified by the index
      *  @return True if the entry contains the string, false otherwise */
-    public boolean DoesEntryContain(int index, String match) {
+    public boolean doesEntryContain(int index, String match) {
         if (index >= entries.length)
             return false;
 
@@ -90,7 +98,7 @@ public class TableData {
     /** Converts the entry from bytes to a String
      * @param index Index of the entry
      * @return The String representation of the entry */
-    public String GetEntry(int index) {
+    public String getEntry(int index) {
         if (index >= entries.length)
             return "";
 
@@ -106,7 +114,7 @@ public class TableData {
     /** Sets the entry to the specified String in bytes
      * @param index Index of the entry
      * @param newText New text of the entry */
-    public void SetEntry(int index, String newText) {
+    public void setEntry(int index, String newText) {
         if (mIsReadOnly)
             return;
 
