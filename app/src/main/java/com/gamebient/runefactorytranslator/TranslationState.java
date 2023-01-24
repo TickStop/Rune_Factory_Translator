@@ -12,18 +12,18 @@ public class TranslationState {
     public final TableData Translation;
 
     public final int numberOfEntries;
-    private int selectedEntryIndex;
+    private int mSelectedEntryIndex;
 
     public TranslationState() {
         this (null, null, "Translation");
-        selectedEntryIndex = 0;
+        mSelectedEntryIndex = 0;
     }
 
     public TranslationState(TableData original, TableData translation, String originalFileName) {
         Original = original;
         Translation = translation;
         OriginalFileName = originalFileName;
-        selectedEntryIndex = -1;
+        mSelectedEntryIndex = -1;
 
         if (Original != null) {
             numberOfEntries = Original.GetEntries().length;
@@ -33,8 +33,9 @@ public class TranslationState {
         }
     }
 
-    public int GetSelectedEntryIndex() {
-        return selectedEntryIndex;
+    /** @return the currently selected index */
+    public int getSelectedEntryIndex() {
+        return mSelectedEntryIndex;
     }
 
 
@@ -52,39 +53,43 @@ public class TranslationState {
         }
     }
 
-    public String[] GetTableEntry() {
+    /** @return the original and translation in String format.
+     * <br> [0] Original
+     * <br> [1] Translation */
+    public String[] getTableEntry() {
         String original =
                 Original != null ?
-                        Original.GetEntry(selectedEntryIndex) :
+                        Original.GetEntry(mSelectedEntryIndex) :
                         "There was no original data imported";
         String translated =
                 Translation != null ?
-                        Translation.GetEntry(selectedEntryIndex) :
+                        Translation.GetEntry(mSelectedEntryIndex) :
                         "There was no translated data imported";
         return new String[] { original, translated };
     }
 
-    public void SelectEntryContaining(String value) {
-        int selectedIndexWhenStarted = selectedEntryIndex;
+    /** Sets the index to the next occurrence of "value".
+     * If no entry contains "value", the current index stays selected */
+    public void selectEntryContaining(String value) {
+        int selectedIndexWhenStarted = mSelectedEntryIndex;
         boolean jumpedToBeginning = false;
         for (int i = selectedIndexWhenStarted; i < numberOfEntries; i++) {
             if (Translation != null) {
                 if (Translation.DoesEntryContain(i, value) && selectedIndexWhenStarted < i) {
-                    SelectEntry(i);
+                    selectEntry(i);
                     return;
                 }
             }
             if (Original != null) {
                 if (Original.DoesEntryContain(i, value)
                         && selectedIndexWhenStarted < i) {
-                    SelectEntry(i);
+                    selectEntry(i);
                     return;
                 }
             }
 
             if (i == numberOfEntries - 1) {
                 if (!jumpedToBeginning) {
-                    // TODO: Add debug call
                     jumpedToBeginning = true;
                     selectedIndexWhenStarted = 0;
                     i = 0;
@@ -93,8 +98,9 @@ public class TranslationState {
         }
     }
 
-    public void SelectEntry(int index) {
-        if (index == selectedEntryIndex)
+    /** Sets the selected index */
+    public void selectEntry(int index) {
+        if (index == mSelectedEntryIndex)
             return;
 
         if (index < 0)
@@ -102,13 +108,14 @@ public class TranslationState {
         if (index >= numberOfEntries)
             index = 0;
 
-        selectedEntryIndex = index;
+        mSelectedEntryIndex = index;
         invokeListeners();
     }
 
-    public void SetEntryAtCurrentIndex(String translation) {
+    /** Sets the current entry of the translation to the passed String */
+    public void setEntryAtCurrentIndex(String translation) {
         if (Translation != null) {
-            Translation.SetEntry(selectedEntryIndex, translation);
+            Translation.SetEntry(mSelectedEntryIndex, translation);
         }
     }
 }

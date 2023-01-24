@@ -7,8 +7,9 @@ import java.io.OutputStream;
 import java.util.Arrays;
 
 public class FileSaveManager {
-
-    public static byte[] ImportBinaryTextFile(InputStream stream) {
+    /** Reads the contents of the InputStream
+     * @return Bytes read from the stream */
+    public static byte[] importBinaryTextFile(InputStream stream) {
         byte[] allBytes = new byte[0];
         int bufferSize = 1024 * 16;
 
@@ -22,8 +23,6 @@ public class FileSaveManager {
                 }
                 allBytes = buffer.toByteArray();
             }
-
-            // int bytesRead = stream.read(data);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -33,16 +32,16 @@ public class FileSaveManager {
             allBytes = new byte[0];
         }
 
-
         return allBytes;
     }
 
-
-    public static void ExportBinaryTextFile(OutputStream stream, TranslationState state) {
-        AppendTableToFile(stream, state.Translation);
+    /** Writes the TranslationState to an OutputStream */
+    public static void exportBinaryTextFile(OutputStream stream, TranslationState state) {
+        appendTableToFile(stream, state.Translation);
     }
 
-    public static void AppendTableToFile(OutputStream stream, TableData data) {
+    /** Writes the TableData to an OutputStream */
+    public static void appendTableToFile(OutputStream stream, TableData data) {
         try {
             stream.write("TEXT".getBytes(GlobalData.Encoding_Default));
             stream.write(ByteConverter.intToByteArray(data.GetNumberOfEntries()));

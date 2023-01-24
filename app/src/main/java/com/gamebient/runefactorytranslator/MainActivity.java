@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Debug;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -71,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
         spinner_Select.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                translationState.SelectEntry(adapterView.getSelectedItemPosition());
+                translationState.selectEntry(adapterView.getSelectedItemPosition());
                 view.refreshDrawableState();
             }
 
@@ -91,10 +90,10 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
 
         originalText.setLongClickable(false);
         originalText.setTextIsSelectable(false);
-        button_Search.setOnClickListener(listener -> translationState.SelectEntryContaining(searchInput.getText().toString()));
-        button_Save.setOnClickListener(listener -> translationState.SetEntryAtCurrentIndex(translatedInput.getText().toString()));
-        button_Previous.setOnClickListener(listener -> translationState.SelectEntry(translationState.GetSelectedEntryIndex() - 1));
-        button_Next.setOnClickListener(listener -> translationState.SelectEntry(translationState.GetSelectedEntryIndex() + 1));
+        button_Search.setOnClickListener(listener -> translationState.selectEntryContaining(searchInput.getText().toString()));
+        button_Save.setOnClickListener(listener -> translationState.setEntryAtCurrentIndex(translatedInput.getText().toString()));
+        button_Previous.setOnClickListener(listener -> translationState.selectEntry(translationState.getSelectedEntryIndex() - 1));
+        button_Next.setOnClickListener(listener -> translationState.selectEntry(translationState.getSelectedEntryIndex() + 1));
     }
 
     private final ActivityResultLauncher<Intent> importOriginal = registerForActivityResult(
@@ -140,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
                     if (translationState.Original.GetNumberOfEntries() == translatedData.GetNumberOfEntries()) {
                         translationState = new TranslationState(translationState.Original, translatedData, translationState.OriginalFileName);
                         translationState.addListener(this);
-                        translationState.SelectEntry(0);
+                        translationState.selectEntry(0);
                     }
                     else {
                         translationState = new TranslationState();
@@ -192,18 +191,21 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
 
 
 
-    private void UpdateUIDisplay(TranslationState state) {
+    /** Updates the UI to show the currently selected entry */
+    private void updateUIDisplay(TranslationState state) {
         System.out.println("Updating UI display");
-        spinner_Select.setSelection(state.GetSelectedEntryIndex());
-        String[] entries = state.GetTableEntry();
+        spinner_Select.setSelection(state.getSelectedEntryIndex());
+        String[] entries = state.getTableEntry();
         originalText.setText(entries[0]);
         translatedInput.setText(entries[1]);
     }
 
+    /** Loads a text file
+     * @return the contents as a byte array */
     private byte[] loadFile(Uri filePath) {
         byte[] allBytes = new byte[0];
         try (InputStream inputStream = getContentResolver().openInputStream(filePath)) {
-            allBytes = FileSaveManager.ImportBinaryTextFile(inputStream);
+            allBytes = FileSaveManager.importBinaryTextFile(inputStream);
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -212,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
         return allBytes;
     }
 
+    /** Saves the current TranslationState to a file */
     private void saveFile(Uri filePath) {
         File file = new File(filePath.getPath());
         if (!file.exists()) {
@@ -223,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
         }
 
         try (OutputStream outputStream = getContentResolver().openOutputStream(filePath, "wt")) {
-            FileSaveManager.ExportBinaryTextFile(outputStream, translationState);
+            FileSaveManager.exportBinaryTextFile(outputStream, translationState);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -231,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements TranslationStateE
 
     @Override
     public void Execute(TranslationState state) {
-        UpdateUIDisplay(state);
+        updateUIDisplay(state);
     }
 
     @Override
