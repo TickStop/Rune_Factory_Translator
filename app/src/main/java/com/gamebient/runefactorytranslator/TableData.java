@@ -13,21 +13,13 @@ public class TableData {
     private final int numberOfEntries;
     private final byte[][] entries;
 
-    /** If the data is readonly, changes in the entries array are not allowed */
-    private boolean mIsReadOnly;
-
     public TableData(byte[] table, boolean isReadOnly) {
         this.dataTable = table;
-        this.mIsReadOnly = isReadOnly;
         byte[] tableLengthData = Arrays.copyOfRange(table, 4, 8);
         numberOfEntries = ByteConverter.byteArrayToInt(tableLengthData);
         entries = new byte[numberOfEntries][];
 
         ReadEntries();
-    }
-
-    public void setReadOnly(boolean isReadOnly) {
-        mIsReadOnly = isReadOnly;
     }
 
     /** @return the number of entries this table has */
@@ -115,9 +107,6 @@ public class TableData {
      * @param index Index of the entry
      * @param newText New text of the entry */
     public void setEntry(int index, String newText) {
-        if (mIsReadOnly)
-            return;
-
         byte[] entry = newText.getBytes(GlobalData.Encoding_Default);
 
         ByteConverter.replace(entry, GlobalData.text_red.display, GlobalData.text_red.original);
