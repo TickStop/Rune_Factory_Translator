@@ -1,4 +1,4 @@
-package com.gamebient.runefactorytranslator;
+package com.tickstop.runefactorytranslator;
 
 public interface TranslationStateEntryChangeListener {
     void Execute(TranslationState state);

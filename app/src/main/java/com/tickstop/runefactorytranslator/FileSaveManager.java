@@ -1,4 +1,4 @@
-package com.gamebient.runefactorytranslator;
+package com.tickstop.runefactorytranslator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

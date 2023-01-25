@@ -1,7 +1,5 @@
-package com.gamebient.runefactorytranslator;
+package com.tickstop.runefactorytranslator;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Locale;
 

@@ -1,4 +1,4 @@
-package com.gamebient.runefactorytranslator;
+package com.tickstop.runefactorytranslator;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
