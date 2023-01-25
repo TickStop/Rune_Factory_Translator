@@ -1,5 +1,5 @@
 
-package com.gamebient.runefactorytranslator;
+package com.tickstop.runefactorytranslator;
 
 import android.app.Activity;
 import android.content.Context;
@@ -21,7 +21,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.gamebient.runefactorytranslator.databinding.ActivityMainBinding;
+import com.tickstop.runefactorytranslator.databinding.ActivityMainBinding;
 
 import java.io.File;
 import java.io.IOException;

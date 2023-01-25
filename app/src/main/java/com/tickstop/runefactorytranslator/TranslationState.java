@@ -1,4 +1,4 @@
-package com.gamebient.runefactorytranslator;
+package com.tickstop.runefactorytranslator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.gamebient.runefactorytranslator.MainActivity">
+    tools:context="com.tickstop.runefactorytranslator.MainActivity">
     <item android:title="@string/action_import" >
         <menu>
             <item
